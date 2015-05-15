@@ -24,27 +24,80 @@ int main(void) {
 
 	__builtin_disable_interrupts(); // step 2: disable interrupts
 	motor_init();
-	INTCONbits.INT0EP = 1;                // step 3: INT0 triggers on rising edge
-	IPC0CLR = 0x1F << 24;           // step 4: clear the 5 pri and subpri bits
-	IPC0 |= 9 << 24;                // step 4: set priority to 2, subpriority to 1
-	IFS0bits.INT0IF = 0;            // step 5: clear the int flag, or IFS0CLR=1<<3
-	IEC0SET = 1 << 3;               // step 6: enable INT0 by setting IEC0<3>
 	__builtin_enable_interrupts();  // step 7: enable interrupts
 	
-	util_state_set(STRAIGHT);
 	int i=0;
-	for (i=0; i<20000000; i++){
-		;
-	}
-	util_state_set(RIGHT);
-	for (i=0; i<10000000; i++){
-		;
-	}
-	util_state_set(STRAIGHT);
+	/*
+	//while (1){
+		util_state_set(STRAIGHT);
+		for (i=0; i<80000000; i++){
+			;
+		}
+		util_state_set(RIGHT);
+		for (i=0; i<80000000; i++){
+			;
+		}
+		util_state_set(STRAIGHT);
+		for (i=0; i<80000000; i++){
+			;
+		}
+		util_state_set(RIGHT);
+		for (i=0; i<80000000; i++){
+			;
+		}
+		util_state_set(STRAIGHT);
+		for (i=0; i<80000000; i++){
+			;
+		}
+	//}
+	*/
+	straight();
+	idle(50);
+	straight();
+	idle(50);
+	straight();
+	idle(50);
+	right();
+	idle(50);
+	straight();
+	idle(50);
+	right();
+	idle(50);
+	straight();
+	straight();
+	idle(50);
+	util_state_set(IDLE);
+	NU32_LED1=0;
+
+
+}
+//time in hundreths of a second
+idle(int time){
+	util_state_set(IDLE);
 	int i=0;
-	for (i=0; i<20000000; i++){
+	int loop= time *400000;
+	for (i=0; i<loop; i++){
 		;
 	}
 }
-
-
+right(){
+	int i=0;
+	util_state_set(RIGHT);
+	for (i=0; i<30000000; i++){
+		;
+	}
+}
+left(){
+	int i=0;
+	util_state_set(LEFT);
+	for (i=0; i<35000000; i++){
+		;
+	}
+}
+straight(){
+	int i=0;
+	util_state_set(STRAIGHT);
+	for (i=0; i<25000000; i++){
+		;
+	}
+}

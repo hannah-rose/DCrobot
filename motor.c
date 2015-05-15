@@ -4,10 +4,10 @@
 char msg[20];
 
 int status=0;
-#define L_MOTOR_DIR LATBbits.LATB0
-#define R_MOTOR_DIR LATBbits.LATB1
-#define L_MOTOR_EN LATBbits.LATB2
-#define R_MOTOR_EN LATBbits.LATB3
+#define R_MOTOR_DIR LATBbits.LATB0
+#define L_MOTOR_DIR LATBbits.LATB1
+#define L_MOTOR_EN LATBbits.LATB3
+#define R_MOTOR_EN LATBbits.LATB2
 
 void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (p32mx795f512l.h)
 	switch(util_state_get()) {
@@ -50,10 +50,13 @@ void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (
 	}
 
 	IFS0bits.T2IF =0;
+	//sprintf(msg, "%i", util_state_get());
+	//NU32_WriteUART1(msg);
+
 }
 void motor_init(void){                    // Initializes the module and the peripherals it uses
   //setup timer2 for Control Loop
-  T2CONbits.TCKPS = 0;      //multiplier=1
+  T2CONbits.TCKPS = 5;      //multiplier=1
   PR2 = 15999;               //period = (PR2+1) * 12.5 ns = 200us = 5kHz
   TMR2=0;
   T2CONbits.ON = 1;               //             turn on Timer2
