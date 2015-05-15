@@ -10,6 +10,10 @@ int status=0;
 #define R_MOTOR_EN LATBbits.LATB2
 
 void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (p32mx795f512l.h)
+	//Test state changes
+	//sprintf(msg, "State: %d  L_MOTOR_EN: %d  R_MOTOR_EN: %d\r\n", util_state_get(), L_MOTOR_EN, R_MOTOR_EN);
+	//NU32_WriteUART1(msg);
+
 	switch(util_state_get()) {
 		case IDLE:
 		{
@@ -54,6 +58,8 @@ void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (
 	//NU32_WriteUART1(msg);
 
 }
+
+
 void motor_init(void){                    // Initializes the module and the peripherals it uses
   //setup timer2 for Control Loop
   T2CONbits.TCKPS = 5;      //multiplier=1
