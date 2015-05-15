@@ -1,7 +1,7 @@
 #include "NU32.h"
 #include "motor.h"
 #include "utilities.h"
-#include "i2c.h"
+#include "i2c_master.h"
 
 char message[200];
 
