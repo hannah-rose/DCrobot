@@ -104,7 +104,7 @@ void __ISR(_I2C_2_VECTOR, IPL1SOFT) I2C2SlaveInterrupt(void) {
 }
 
 void i2c_setup(){
-	int ie = __builtin_disable_interrupts();
+	__builtin_disable_interrupts();
 	I2C2BRG=90;				// I2CBRG=[1/(2*Fsck)-PGD]*Pblck-2
 							// Fsck is the frequency(100khz or 400khz), PGD=104ns
 							// this is 400 khz mode
@@ -113,10 +113,7 @@ void i2c_setup(){
 	IEC1bits.I2C2MIE=1;		// master interrupt is enabled
 	IFS1bits.I2C2MIF=0;		// clear the interrupt flag
 	I2C2CONbits.ON=1;		// turn on the I2C2 module
-
-	if(ie&1){
-		__builtin_enable_interrupts();
-	}
+	__builtin_enable_interrupts();
 }
 
 // communicate with the slave at address addr. first write wlen bytes to the

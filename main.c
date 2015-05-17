@@ -25,12 +25,19 @@ void __ISR(_EXTERNAL_0_VECTOR, IPL2SOFT) Ext0ISR(void) { // step 1: the ISR
 
 void main(void) {
     NU32_Startup(); // cache on, min flash wait, interrupts on, LED/button init, UART init
+    color_setup();
 
     //Set up interrupt for distance tracking
 	__builtin_disable_interrupts(); // step 2: disable interrupts
-	motor_init();
+	//motor_init();
 	__builtin_enable_interrupts();  // step 7: enable interrupts
 	
+
+	//color sensor
+	while(1){
+		sense_color();
+	}
+
 	int i=0;
 	/*
 	//while (1){
