@@ -35,3 +35,4 @@ bject files
 #peter
 *.map
 *.dis
+Makefile
