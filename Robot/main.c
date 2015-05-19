@@ -28,14 +28,22 @@ void main(void) {
     color_setup();
 
     //Set up interrupt for distance tracking
-	__builtin_disable_interrupts(); // step 2: disable interrupts
-	//motor_init();
-	__builtin_enable_interrupts();  // step 7: enable interrupts
+		__builtin_disable_interrupts(); // step 2: disable interrupts
+		//motor_init();
+		__builtin_enable_interrupts();  // step 7: enable interrupts
 	
+		short rgb[4];
+		sprintf(message, "Clear: %d Red: %d Green: %d Blue: %d\r\n", rgb[0],rgb[1],rgb[2],rgb[2]);
+		NU32_WriteUART1(message);
+
+		sense_color(rgb);
+		sprintf(message, "Clear: %d Red: %d Green: %d Blue: %d\r\n", rgb[0],rgb[1],rgb[2],rgb[2]);
+		NU32_WriteUART1(message);
+
 
 	//color sensor
 	while(1){
-		sense_color();
+	;
 	}
 
 	int i=0;

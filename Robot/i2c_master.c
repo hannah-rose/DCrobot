@@ -24,6 +24,10 @@ static volatile unsigned int n_read = 0; 	// number of data bytes to read
 void __ISR(_I2C_2_VECTOR, IPL1SOFT) I2C2SlaveInterrupt(void) {
 	static unsigned int write_index = 0, read_index = 0; // indexes into the read/write arrays
 
+	char buf[20];
+	sprintf(buf, "Hi! Your state is %d\r\n", state);
+	//NU32_WriteUART1(buf);
+
 	switch(state){
 		case START:						// start bit has been set
 			write_index=0;				// reset indices

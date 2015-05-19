@@ -119,8 +119,6 @@ typedef enum
 }
 Gain;
 
-//bool begin(void);
-
 //set integration time and gains
 void setIntegrationTime(IntegrationTime t);
 void setGain(Gain g);
@@ -140,8 +138,6 @@ void color_write_reg(unsigned char reg, unsigned char data);
 void color_setup();
 
 //functions to control interrupts
-//void setInterrupt(bool flag);
-void clearInterrupt(void);
 void setIntLimits(short l, short h);
 
 #endif
