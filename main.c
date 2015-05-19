@@ -2,26 +2,14 @@
 #include "motor.h"
 #include "utilities.h"
 #include "i2c.h"
+#include "stateLoop.h"
 
-char message[200];
+
+char message[ 50];
 
 #define DELAYTIME 40000 // 40 thousand core clock ticks
 
 static int wait=0;
-
-void __ISR(_EXTERNAL_0_VECTOR, IPL2SOFT) Ext0ISR(void) { // step 1: the ISR
-  NU32_WriteUART1("Hi!\r\n");
-
-  _CP0_SET_COUNT(0);
-  while(LATDbits.LATD0==1) {
-      ;                           // delay for 10 M core ticks, 0.25 s
-  }
-  float time=_CP0_GET_COUNT()/40000000;
-  float distance = (time/2) / 29.1;
-  sprintf(message, "%f\n", distance);
-  NU32_WriteUART1(message);
-  IFS0CLR = 1 << 3;               // clear interrupt flag IFS0<3>
-}
 
 void main(void) {
     NU32_Startup(); // cache on, min flash wait, interrupts on, LED/button init, UART init
@@ -29,50 +17,24 @@ void main(void) {
     //Set up interrupt for distance tracking
 	__builtin_disable_interrupts(); // step 2: disable interrupts
 	motor_init();
+	util_setup();
 	__builtin_enable_interrupts();  // step 7: enable interrupts
 	
-	int i=0;
-	/*
-	//while (1){
-		util_state_set(STRAIGHT);
-		for (i=0; i<80000000; i++){
-			;
+	while(1){
+		state_t act=util_get_next_action();
+		position_t pos;
+		pos = util_position_get();
+		sprintf(message,"STATE=%d, X:%d, Y:%d, DIR:%d", act, pos.x, pos.y, pos.dir);
+		NU32_WriteUART1(message);
+		if (act==STRAIGHT){
+			straight();
+		} else if (act==RIGHT){
+			right();
+		} else {
+			left();
 		}
-		util_state_set(RIGHT);
-		for (i=0; i<80000000; i++){
-			;
-		}
-		util_state_set(STRAIGHT);
-		for (i=0; i<80000000; i++){
-			;
-		}
-		util_state_set(RIGHT);
-		for (i=0; i<80000000; i++){
-			;
-		}
-		util_state_set(STRAIGHT);
-		for (i=0; i<80000000; i++){
-			;
-		}
-	//}
-	*/
-	straight();
-	idle(50);
-	straight();
-	idle(50);
-	straight();
-	idle(50);
-	right();
-	idle(50);
-	straight();
-	idle(50);
-	right();
-	idle(50);
-	straight();
-	straight();
-	idle(50);
-	util_state_set(IDLE);
-	NU32_LED1=0;
+		update_position(act);
+	}
 
 
 }
@@ -108,3 +70,4 @@ straight(){
 		;
 	}
 }
+

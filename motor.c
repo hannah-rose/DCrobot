@@ -17,16 +17,26 @@ void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (
 	switch(util_state_get()) {
 		case IDLE:
 		{
+
 			L_MOTOR_EN=0;
 			R_MOTOR_EN=0;
 			break;
 		}
 		case STRAIGHT:
 		{
-			L_MOTOR_EN=1;
-			R_MOTOR_EN=1;
-			L_MOTOR_DIR=0;
-			R_MOTOR_DIR=0;			
+			static int count=0;
+			if (count==3){
+				count=0;
+				L_MOTOR_EN=0;
+				R_MOTOR_EN=0;
+			} else {
+				L_MOTOR_EN=1;
+				R_MOTOR_EN=1;
+				L_MOTOR_DIR=0;
+				R_MOTOR_DIR=0;
+				count++;	
+			}
+				
 			break;
 		}
 		case LEFT:
