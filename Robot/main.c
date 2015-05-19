@@ -1,8 +1,8 @@
 #include "NU32.h"
 #include "motor.h"
 #include "utilities.h"
-#include "i2c.h"
 #include "stateLoop.h"
+#include "i2c_master.h"
 
 
 char message[ 50];
@@ -13,6 +13,7 @@ static int wait=0;
 
 void main(void) {
     NU32_Startup(); // cache on, min flash wait, interrupts on, LED/button init, UART init
+    color_setup();
 
     //Set up interrupt for distance tracking
 	__builtin_disable_interrupts(); // step 2: disable interrupts

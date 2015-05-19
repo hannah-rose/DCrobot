@@ -1,6 +1,6 @@
 XC32PATH=/opt/microchip/xc32/v1.34/bin
-HARMONYPATH=/home/peter/microchip/harmony/v1_02
-NU32PATH=/home/peter/mech333
+HARMONYPATH=/home/harntson/microchip/harmony/v1_02
+NU32PATH=/home/harntson/Classes/MechE333/PIC32quickstart
 PORTA=/dev/ttyUSB0
 PORTB=/dev/ttyUSB1
 TERMEMU=screen
