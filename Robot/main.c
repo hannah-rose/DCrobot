@@ -3,9 +3,10 @@
 #include "utilities.h"
 #include "stateLoop.h"
 #include "i2c_master.h"
+#include "color.h"
 
 
-char message[ 50];
+char message[200];
 
 #define DELAYTIME 40000 // 40 thousand core clock ticks
 
@@ -21,6 +22,12 @@ void main(void) {
 	util_setup();
 	__builtin_enable_interrupts();  // step 7: enable interrupts
 	
+
+	short rgb[4];
+	sense_color(rgb);
+	sprintf(message, "Clear: %d Red: %d Green: %d Blue: %d\r\n", rgb[0],rgb[1],rgb[2],rgb[3]);
+	NU32_WriteUART1(message);
+
 	while(1){
 		state_t act=util_get_next_action();
 		position_t pos;
