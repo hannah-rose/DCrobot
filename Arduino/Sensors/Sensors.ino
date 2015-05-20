@@ -18,6 +18,9 @@ int maximumRange = 200; // Max range needed
 int minimumRange = 0; // Min range needed
 long duration, distance; // Duration is used to calculate distance
 
+// Communication pins
+#define colorPin 8 // Color pin
+
 void setup() {
   Serial.begin(9600);
   
@@ -39,31 +42,48 @@ void setup() {
   // Initialize pins needed for range sensor
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
+  
+  // Initialize communication pins
+  pinMode(colorPin, OUTPUT);
+  DDRD = B11111111; // Sets Port D, pins 0-7 as output
 
 }
 
 void loop() 
 {
   //read from color sensor
-  uint16_t r, g, b, c, colorTemp, lux;
+  uint16_t r, g, b, c, colorTemp;
   
   tcs.getRawData(&r, &g, &b, &c);
   colorTemp = tcs.calculateColorTemperature(r, g, b);
-  lux = tcs.calculateLux(r, g, b);
+  //lux = tcs.calculateLux(r, g, b);
   
   Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.print(" K - ");
-  Serial.print("Lux: "); Serial.print(lux, DEC); Serial.print(" - ");
-  Serial.print("R: "); Serial.print(r, DEC); Serial.print(" ");
-  Serial.print("G: "); Serial.print(g, DEC); Serial.print(" ");
-  Serial.print("B: "); Serial.print(b, DEC); Serial.print(" ");
-  Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
+  //Serial.print("Lux: "); Serial.print(lux, DEC); Serial.print(" - ");
+  //Serial.print("R: "); Serial.print(r, DEC); Serial.print(" ");
+  //Serial.print("G: "); Serial.print(g, DEC); Serial.print(" ");
+  //Serial.print("B: "); Serial.print(b, DEC); Serial.print(" ");
+  //Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
   Serial.println(" ");
+  
+  // Update output pin based on color temperature
+  if (colorTemp<3000){
+    digitalWrite(colorPin, LOW); //white
+  }
+  else {
+    digitalWrite(colorPin, HIGH); //purple
+  }
+  
   
   // Read from gyro
   gyro.read();
   Serial.print("X: "); Serial.print((int)gyro.data.x);   Serial.print(" ");
   Serial.print("Y: "); Serial.print((int)gyro.data.y);   Serial.print(" ");
   Serial.print("Z: "); Serial.println((int)gyro.data.z); Serial.print(" ");
+  
+  // Update output pins for gyro
+  byte LSB = lowByte((int)gyro.data.x);
+  PORTD = LSB; // Write byte to port D, pins 0-7
   
   //Determine distance of nearest object by bouncing soundwaves off of it
   digitalWrite(trigPin, LOW);
