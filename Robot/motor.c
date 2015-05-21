@@ -1,5 +1,6 @@
 #include "NU32.h"
 #include "utilities.h"
+#include "motor.h"
 
 char msg[20];
 
