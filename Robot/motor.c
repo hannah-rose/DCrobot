@@ -9,12 +9,22 @@ int status=0;
 #define L_MOTOR_EN LATBbits.LATB3
 #define R_MOTOR_EN LATBbits.LATB2
 
+int colorL;
+int colorR;
+int gyro;
+int range;
+
 void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (p32mx795f512l.h)
 	//Test state changes
 	//sprintf(msg, "State: %d  L_MOTOR_EN: %d  R_MOTOR_EN: %d\r\n", util_state_get(), L_MOTOR_EN, R_MOTOR_EN);
 	//NU32_WriteUART1(msg);
-
-	switch(util_state_get()) {
+	static state_t previousState;
+	state_t currentState = util_state_get();
+	int delay=0; int i;
+	if (currentState == previousState){
+		delay= 1000000;
+	}
+	switch(currentState) {
 		case IDLE:
 		{
 
@@ -25,15 +35,18 @@ void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (
 		case STRAIGHT:
 		{
 			static int count=0;
-			if (count==3){
+			if (count==2){
 				count=0;
 				L_MOTOR_EN=0;
 				R_MOTOR_EN=0;
 			} else {
-				L_MOTOR_EN=1;
-				R_MOTOR_EN=1;
 				L_MOTOR_DIR=0;
 				R_MOTOR_DIR=0;
+				for (i=0; i<delay; i++){
+					;
+				}
+				L_MOTOR_EN=1;
+				R_MOTOR_EN=1;
 				count++;	
 			}
 				
@@ -41,18 +54,24 @@ void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (
 		}
 		case LEFT:
 		{
-			L_MOTOR_EN=1;
-			R_MOTOR_EN=1;
 			L_MOTOR_DIR=0;
 			R_MOTOR_DIR=1;
+			for (i=0; i<delay; i++){
+					;
+			}
+			L_MOTOR_EN=1;
+			R_MOTOR_EN=1;
 			break;
 		}
 		case RIGHT:
 		{
-			L_MOTOR_EN=1;
-			R_MOTOR_EN=1;
 			L_MOTOR_DIR=1;
 			R_MOTOR_DIR=0;
+			for (i=0; i<delay; i++){
+					;
+			}
+			L_MOTOR_EN=1;
+			R_MOTOR_EN=1;
 			break;
 		}
 		case ROAM:
@@ -62,10 +81,11 @@ void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (
 			break;
 		}
 	}
-
+	// int result=(PORTE&0x00FF); //clear top 8 to get our 8bit number.
+	// sprintf(msg,"%i\r\n",result);
+	// NU32_WriteUART1(msg);
 	IFS0bits.T2IF =0;
-	//sprintf(msg, "%i", util_state_get());
-	//NU32_WriteUART1(msg);
+	
 
 }
 
@@ -83,7 +103,7 @@ void motor_init(void){                    // Initializes the module and the peri
   IFS0bits.T2IF = 0;              // INT step 5: clear interrupt flag
   IEC0bits.T2IE = 1;              // INT step 6: enable interrupt
 
-  TRISBbits.TRISB0=0;
+  TRISBbits.TRISB0=0;		//Configure as outputs		
   LATBbits.LATB0=0;
   TRISBbits.TRISB1=0;
   LATBbits.LATB1=0;
@@ -91,4 +111,24 @@ void motor_init(void){                    // Initializes the module and the peri
   LATBbits.LATB2=0;
   TRISBbits.TRISB3=0;
   LATBbits.LATB3=0;
+}
+
+void sensor_init(void){
+	TRISE=0xFFFF; //all inputs
+}
+
+color_t getColorL(){
+	return colorL;
+}
+
+color_t getColorR(){
+	return colorR;
+}
+
+int getGyro(){
+	return gyro;
+}
+
+int getRange(){
+	return range;
 }
