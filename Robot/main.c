@@ -16,6 +16,7 @@ static int wait=0;
 void main(void) {
     NU32_Startup(); // cache on, min flash wait, interrupts on, LED/button init, UART init
     init_servo();
+    init_time();
 
     //Set up interrupt for distance tracking
 	__builtin_disable_interrupts(); // step 2: disable interrupts
