@@ -18,6 +18,8 @@ position_t util_position_get();
 
 state_t util_get_next_action();
 
+position_t update_position(state_t action);
+
 #endif
 
 
