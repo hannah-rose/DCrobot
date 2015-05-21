@@ -1,7 +1,15 @@
+/*
+ * Sensors.ino
+ * Author: Hannah
+ * 
+ * Reads from 1 Adafruit Color Sensors and 1 Adafruit Gyroscope using I2C protocol
+ * Returns data from the x-axis of the gyroscope over pins 2-9
+ * Returns color selection (purple: 1, white:0) over pin 10
+ * Pin 11 will go high after 170s have passed, signalling the robot to stop collecting cubes
+ */
+
 #include <TimeAlarms.h>
 #include <Time.h>
-
-//Reads from 1 Adafruit Color Sensors and 1 Adafruit Gyroscope using I2C protocol
 #include <Wire.h>
 #include <Adafruit_L3GD20.h>
 #include "Adafruit_TCS34725.h"
@@ -38,6 +46,7 @@ void setup() {
   
   // Initialize communication pins
   pinMode(colorPin, OUTPUT);
+  pinMode(timePin, OUTPUT);
   
   pinMode(2,OUTPUT);
   pinMode(3,OUTPUT);
@@ -48,10 +57,8 @@ void setup() {
   pinMode(8,OUTPUT);
   pinMode(9,OUTPUT);
   
-  pinMode(10,OUTPUT);
-  
-  // Call time_out after 180
-  Alarm.timerOnce(180, time_out);
+  // Call time_out after 170s
+  Alarm.timerOnce(170, time_out);
 
 }
 

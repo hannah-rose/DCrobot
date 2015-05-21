@@ -4,6 +4,7 @@
 #include "stateLoop.h"
 #include "i2c_master.h"
 #include "color.h"
+#include "servo.h"
 
 
 char message[200];
@@ -14,6 +15,7 @@ static int wait=0;
 
 void main(void) {
     NU32_Startup(); // cache on, min flash wait, interrupts on, LED/button init, UART init
+    init_servo();
 
     //Set up interrupt for distance tracking
 	__builtin_disable_interrupts(); // step 2: disable interrupts
@@ -42,9 +44,8 @@ void main(void) {
 		}
 		update_position(act);
 	}
-
-
 }
+
 //time in hundreths of a second
 idle(int time){
 	util_state_set(IDLE);
@@ -82,13 +83,13 @@ straight(){
 	//Sensors
 	util_state_set(STRAIGHT);
 	color_t colorR, colorL;
-	colorR = getColorR;
-	colorL = getColorL;
+	//colorR = getColorR;
+	//colorL = getColorL;
 	while (colorR!=BLACK && colorL!=BLACK){
 		; //Go forward
 	}
 	if(colorR==BLACK){
-		util_state_set(RIGHT)
+		util_state_set(RIGHT);
 		while(colorL!=BLACK){
 			; //wait for Left to hit black
 		}

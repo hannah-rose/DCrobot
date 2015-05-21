@@ -10,4 +10,6 @@ void init_servo();
 //Sweep blocks out of robot
 void sweep();
 
+void delay(int time);
+
 #endif 
