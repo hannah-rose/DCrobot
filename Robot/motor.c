@@ -5,10 +5,10 @@
 char msg[20];
 
 int status=0;
-#define R_MOTOR_DIR LATBbits.LATB0
-#define L_MOTOR_DIR LATBbits.LATB1
-#define L_MOTOR_EN LATBbits.LATB3
-#define R_MOTOR_EN LATBbits.LATB2
+#define R_MOTOR_DIR LATBbits.LATB14
+#define L_MOTOR_DIR LATBbits.LATB13
+#define L_MOTOR_EN LATBbits.LATB12
+#define R_MOTOR_EN LATBbits.LATB15
 
 int colorL;
 int colorR;
@@ -19,59 +19,50 @@ void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (
 	//Test state changes
 	//sprintf(msg, "State: %d  L_MOTOR_EN: %d  R_MOTOR_EN: %d\r\n", util_state_get(), L_MOTOR_EN, R_MOTOR_EN);
 	//NU32_WriteUART1(msg);
-	static state_t previousState;
 	state_t currentState = util_state_get();
-	int delay=0; int i;
-	if (currentState == previousState){
-		delay= 1000000;
-	}
+
 	switch(currentState) {
 		case IDLE:
 		{
 
 			L_MOTOR_EN=0;
 			R_MOTOR_EN=0;
+			L_MOTOR_DIR=0;
+			R_MOTOR_DIR=0;
 			break;
 		}
 		case STRAIGHT:
 		{
-			static int count=0;
-			if (count==2){
-				count=0;
-				L_MOTOR_EN=0;
-				R_MOTOR_EN=0;
-			} else {
+			// static int count=0;
+			// if (count==2){
+			// 	count=0;
+			// 	L_MOTOR_EN=0;
+			// 	R_MOTOR_EN=0;
+			// 	L_MOTOR_DIR=0;
+			// 	R_MOTOR_DIR=0;
+			// } else {
 				L_MOTOR_DIR=0;
 				R_MOTOR_DIR=0;
-				for (i=0; i<delay; i++){
-					;
-				}
 				L_MOTOR_EN=1;
 				R_MOTOR_EN=1;
-				count++;	
-			}
+				//count++;	
+			// }//
 				
 			break;
 		}
 		case LEFT:
 		{
+			L_MOTOR_EN=1;
+			R_MOTOR_EN=0;
 			L_MOTOR_DIR=0;
 			R_MOTOR_DIR=1;
-			for (i=0; i<delay; i++){
-					;
-			}
-			L_MOTOR_EN=1;
-			R_MOTOR_EN=1;
 			break;
 		}
 		case RIGHT:
 		{
 			L_MOTOR_DIR=1;
 			R_MOTOR_DIR=0;
-			for (i=0; i<delay; i++){
-					;
-			}
-			L_MOTOR_EN=1;
+			L_MOTOR_EN=0;
 			R_MOTOR_EN=1;
 			break;
 		}
@@ -82,9 +73,6 @@ void __ISR(_TIMER_2_VECTOR, IPL6SOFT) Controller(void){ // _TIMER_2_VECTOR = 8 (
 			break;
 		}
 	}
-	// int result=(PORTE&0x00FF); //clear top 8 to get our 8bit number.
-	// sprintf(msg,"%i\r\n",result);
-	// NU32_WriteUART1(msg);
 	IFS0bits.T2IF =0;
 	
 
@@ -114,6 +102,7 @@ void motor_init(void){                    // Initializes the module and the peri
   LATBbits.LATB3=0;
 }
 
+<<<<<<< HEAD
 void sensor_init(void){
 	TRISE=0xFFFF; // configure all pins in port E as inputs to monitor the gyro
 	TRISGbits.TRISG15 = 1; // configure pin G15 as input to monitor color
@@ -138,6 +127,18 @@ int getGyro(){
 	return gyro;
 }
 
-int getRange(){
-	return range;
+void sensor_init(void){
+	TRISE=0xFFFF; //all inputs
 }
+
+color_t getColor(){
+	return colorR;
+}
+
+int getGyro(){
+	return gyro;
+}
+
+// int getRange(){
+// 	return range;
+// }
