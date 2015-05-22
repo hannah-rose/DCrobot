@@ -88,16 +88,28 @@ void main(void) {
 		//sprintf(message,"STATE=%d, X:%d, Y:%d, DIR:%d\r\n", act, pos.x, pos.y, pos.dir);
 		//NU32_WriteUART1(message);
 
-		int gyro_x;
-		gyro_x = getGyro();
-		sprintf(message,"Gyroscope x is %d\r\n", gyro_x);
-		NU32_WriteUART1(message);
-		color_t color;
-		color = getColor();
-		sprintf(message,"Color: %d\r\n",color);
-		NU32_WriteUART1(message);
-		idle(50);
+		// int gyro_x;
+		// gyro_x = getGyro();
+		// sprintf(message,"Gyroscope x is %d\r\n", gyro_x);
+		// NU32_WriteUART1(message);
+		// color_t color;
+		// color = getColor();
+		// sprintf(message,"Color: %d\r\n",color);
+		// NU32_WriteUART1(message);
 
+
+		//Timer
+		int t = check_time();
+		if(t>=170){
+			sprintf(message,"Time! Time! Time!!!!\r\n");
+			NU32_WriteUART1(message);
+			LATACLR = 0x30; // clear RA4 and RA5 low (LED1 and LED2 on)
+	
+			// Call function to send robot to the correct square and dump its blocks
+			// For now, just stop the robot
+			util_state_set(IDLE);
+			sweep();
+		}
 
 		if (act==STRAIGHT){
 			straight();

@@ -80,18 +80,20 @@ void loop()
   // Update output pin based on color temperature
   if (colorTemp<3000){
     digitalWrite(colorPin, LOW); //white
+    Serial.println("White");
   }
   else {
     digitalWrite(colorPin, HIGH); //purple
+    Serial.println("Purple");
   }
   
   // Read from gyro
   gyro.read();
   int x = (int) gyro.data.x;
   
-  Serial.print("X: "); Serial.print(x); Serial.print(bitRead(x,0));   Serial.print(" ");
-  Serial.print("Y: "); Serial.print((int)gyro.data.y);   Serial.print(" ");
-  Serial.print("Z: "); Serial.println((int)gyro.data.z); 
+  //Serial.print("X: "); Serial.print(x); Serial.print(" ");
+  //Serial.print("Y: "); Serial.print((int)gyro.data.y);   Serial.print(" ");
+  //Serial.print("Z: "); Serial.println((int)gyro.data.z); 
   
   // Update output pins for gyro
   for (int i=0; i<8; i++) {
@@ -102,10 +104,19 @@ void loop()
     else{
       digitalWrite(i+2,LOW);
     }
-  }  
+  }
+  
+  int t = digitalRead(timePin);
+  if(timePin==1){
+    Serial.println("Time is up!");
+  }
+  
+  Serial.println("");  
+  Serial.print("Time: "); Serial.print(minute(),DEC); Serial.print(" : "); Serial.print(second(),DEC); Serial.println("");
 }
 
 void time_out() {
   digitalWrite(timePin,HIGH);
+  Serial.println("Time!!!!!!!!");
 }
 
