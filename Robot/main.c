@@ -21,27 +21,60 @@ void main(void) {
 	util_setup();
 	__builtin_enable_interrupts();  // step 7: enable interrupts
 
-	while(1){
-		straight();
-		state_t act=util_get_next_action();
-		position_t pos;
-		pos = util_position_get();
-		//sprintf(message,"STATE=%d, X:%d, Y:%d, DIR:%d\r\n", act, pos.x, pos.y, pos.dir);
-		//NU32_WriteUART1(message);
-		if (act==STRAIGHT){
-			straight();
-			idle(50);
-		} else if (act==RIGHT){
-			right();
-			idle(50);
 
-		} else {
-			left();
-			idle(50);
+	straight();
+	util_state_set(IDLE);
+	// straight();
+	// util_state_set(IDLE);
+	// delay(100);
+	// straight();
+	// util_state_set(IDLE);
+	// delay(100);
+	// straight();
+	// util_state_set(IDLE);
+	// delay(100);
+	// straight();
+	// util_state_set(IDLE);
+	// delay(100);
+	// straight();
+	// util_state_set(IDLE);
+	// delay(100);
+	// straight();
+	// util_state_set(IDLE);
+	// delay(100);
+	// straight();
+	// util_state_set(IDLE);
+	// delay(100);
+	// left();
+	// idle(100);
 
-		}
-		update_position(act);
-	}
+
+	// delay(50);
+	// straight();
+	// delay(50);
+	// straight();
+	// idle(100);
+	// while(1){
+	// 	straight();
+	// 	state_t act=util_get_next_action();
+	// 	position_t pos;
+	// 	pos = util_position_get();
+	// 	//sprintf(message,"STATE=%d, X:%d, Y:%d, DIR:%d\r\n", act, pos.x, pos.y, pos.dir);
+	// 	//NU32_WriteUART1(message);
+	// 	if (act==STRAIGHT){
+	// 		straight();
+	// 		idle(50);
+	// 	} else if (act==RIGHT){
+	// 		right();
+	// 		idle(50);
+
+	// 	} else {
+	// 		left();
+	// 		idle(50);
+
+	// 	}
+	// 	update_position(act);
+	// }
 
 
 }
@@ -56,53 +89,28 @@ idle(int time){
 }
 right(){
 	int i=0;
-	util_state_set(RIGHT);
-	for (i=0; i<5500000; i++){
+	util_state_set(LEFT);
+	for (i=0; i<500000; i++){
 		;
 	}
 }
 left(){
 	int i=0;
 	util_state_set(LEFT);
-	for (i=0; i<5500000; i++){
+	for (i=0; i<2500000; i++){
 		;
 	}
 
 	util_state_set(IDLE);
 }
 straight(){
-	/*
-	Timed
+	
 	int i=0;
 	util_state_set(STRAIGHT);
-	for (i=0; i<2500000; i++){
+	for (i=0; i<10000000; i++){
 		;
 	}
-	*/
-	//Sensors
-	util_state_set(STRAIGHT);
-	color_t colorR, colorL;
-	colorR = getColorR;
-	colorL = getColorL;
-	while (colorR!=BLACK && colorL!=BLACK){
-		; //Go forward
-	}
-	if(colorR==BLACK){
-		util_state_set(RIGHT)
-		while(colorL!=BLACK){
-			; //wait for Left to hit black
-		}
-	} else if (colorL==BLACK) {
-		util_state_set(LEFT);
-		while(colorR!=BLACK){
-			; //wait for Right to hit black
-		}
-	}
-	util_state_set(STRAIGHT);
-	int i = 0;
-	//get over the bump"
-	for (i=0; i<10000; i++){
-		;
-	}
+	
+	
 }
 
