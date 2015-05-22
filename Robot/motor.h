@@ -9,5 +9,5 @@ void sensor_init(void);
 color_t getColor();
 //color_t getColorR();
 int getGyro();
-int getRange();
+//int getRange();
 #endif

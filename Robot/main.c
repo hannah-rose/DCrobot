@@ -79,7 +79,7 @@ void main(void) {
 	// 	update_position(act);
 	// }
 
-	/*
+	
 	while(1){
 		straight();
 		state_t act=util_get_next_action();
@@ -87,6 +87,18 @@ void main(void) {
 		pos = util_position_get();
 		//sprintf(message,"STATE=%d, X:%d, Y:%d, DIR:%d\r\n", act, pos.x, pos.y, pos.dir);
 		//NU32_WriteUART1(message);
+
+		int gyro_x;
+		gyro_x = getGyro();
+		sprintf(message,"Gyroscope x is %d\r\n", gyro_x);
+		NU32_WriteUART1(message);
+		color_t color;
+		color = getColor();
+		sprintf(message,"Color: %d\r\n",color);
+		NU32_WriteUART1(message);
+		idle(50);
+
+
 		if (act==STRAIGHT){
 			straight();
 			idle(50);
@@ -101,7 +113,7 @@ void main(void) {
 		}
 		update_position(act);
 	}
-	*/
+	
 }
 
 //time in hundreths of a second

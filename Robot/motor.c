@@ -102,7 +102,7 @@ void motor_init(void){                    // Initializes the module and the peri
   LATBbits.LATB3=0;
 }
 
-<<<<<<< HEAD
+
 void sensor_init(void){
 	TRISE=0xFFFF; // configure all pins in port E as inputs to monitor the gyro
 	TRISGbits.TRISG15 = 1; // configure pin G15 as input to monitor color
@@ -127,17 +127,17 @@ int getGyro(){
 	return gyro;
 }
 
-void sensor_init(void){
-	TRISE=0xFFFF; //all inputs
-}
+// void sensor_init(void){
+// 	TRISE=0xFFFF; //all inputs
+// }
 
-color_t getColor(){
-	return colorR;
-}
+// color_t getColor(){
+// 	return colorR;
+// }
 
-int getGyro(){
-	return gyro;
-}
+// int getGyro(){
+// 	return gyro;
+// }
 
 // int getRange(){
 // 	return range;

@@ -37,7 +37,7 @@ void setup() {
     while (1);
   }
   
-  // Check to detect range sensor
+  // Check to detect gyro sensor
    if (!gyro.begin(gyro.L3DS20_RANGE_250DPS))
   {
     Serial.println("Oops... unable to initialize the L3GD20. Check your wiring!");
