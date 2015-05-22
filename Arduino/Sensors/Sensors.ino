@@ -1,25 +1,30 @@
-//Reads from 1 Adafruit Color Sensors and 1 Adafruit Gyroscope using I2C protocol
-//Reads from 1 HC-SR04 Ping distance sensor
+/*
+ * Sensors.ino
+ * Author: Hannah
+ * 
+ * Reads from 1 Adafruit Color Sensors and 1 Adafruit Gyroscope using I2C protocol
+ * Returns data from the x-axis of the gyroscope over pins 2-9
+ * Returns color selection (purple: 1, white:0) over pin 10
+ * Pin 11 will go high after 170s have passed, signalling the robot to stop collecting cubes
+ */
+
+#include <TimeAlarms.h>
+#include <Time.h>
 #include <Wire.h>
 #include <Adafruit_L3GD20.h>
 #include "Adafruit_TCS34725.h"
+#include <Time.h>
 
 // Initialize color sensor with default values  (int time=2.4ms, gain=1x)
-Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_2_4MS, TCS34725_GAIN_1X);
+uint16_t r, g, b, c, colorTemp;
 
 // Initialize gyro
 Adafruit_L3GD20 gyro;
 
-// Initialize distance sensor
-#define echoPin 12 // Echo pin
-#define trigPin 13 // Trigger pin
-
-int maximumRange = 200; // Max range needed
-int minimumRange = 0; // Min range needed
-long duration, distance; // Duration is used to calculate distance
-
 // Communication pins
-#define colorPin 8 // Color pin
+#define colorPin 10 // Color pin
+#define timePin 11 // Time pin
 
 void setup() {
   Serial.begin(9600);
@@ -39,31 +44,37 @@ void setup() {
     while (1);
   } 
   
-  // Initialize pins needed for range sensor
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-  
   // Initialize communication pins
   pinMode(colorPin, OUTPUT);
-  DDRD = B11111111; // Sets Port D, pins 0-7 as output
+  pinMode(timePin, OUTPUT);
+  
+  pinMode(2,OUTPUT);
+  pinMode(3,OUTPUT);
+  pinMode(4,OUTPUT);
+  pinMode(5,OUTPUT);
+  pinMode(6,OUTPUT);
+  pinMode(7,OUTPUT);
+  pinMode(8,OUTPUT);
+  pinMode(9,OUTPUT);
+  
+  // Call time_out after 170s
+  Alarm.timerOnce(170, time_out);
 
 }
 
 void loop() 
 {
-  //read from color sensor
-  uint16_t r, g, b, c, colorTemp;
-  
+  //Read from color sensor
   tcs.getRawData(&r, &g, &b, &c);
   colorTemp = tcs.calculateColorTemperature(r, g, b);
   //lux = tcs.calculateLux(r, g, b);
   
   Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.print(" K - ");
   //Serial.print("Lux: "); Serial.print(lux, DEC); Serial.print(" - ");
-  //Serial.print("R: "); Serial.print(r, DEC); Serial.print(" ");
-  //Serial.print("G: "); Serial.print(g, DEC); Serial.print(" ");
-  //Serial.print("B: "); Serial.print(b, DEC); Serial.print(" ");
-  //Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
+  Serial.print("R: "); Serial.print(r, DEC); Serial.print(" ");
+  Serial.print("G: "); Serial.print(g, DEC); Serial.print(" ");
+  Serial.print("B: "); Serial.print(b, DEC); Serial.print(" ");
+  Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
   Serial.println(" ");
   
   // Update output pin based on color temperature
@@ -74,37 +85,27 @@ void loop()
     digitalWrite(colorPin, HIGH); //purple
   }
   
-  
   // Read from gyro
   gyro.read();
-  Serial.print("X: "); Serial.print((int)gyro.data.x);   Serial.print(" ");
+  int x = (int) gyro.data.x;
+  
+  Serial.print("X: "); Serial.print(x); Serial.print(bitRead(x,0));   Serial.print(" ");
   Serial.print("Y: "); Serial.print((int)gyro.data.y);   Serial.print(" ");
-  Serial.print("Z: "); Serial.println((int)gyro.data.z); Serial.print(" ");
+  Serial.print("Z: "); Serial.println((int)gyro.data.z); 
   
   // Update output pins for gyro
-  byte LSB = lowByte((int)gyro.data.x);
-  PORTD = LSB; // Write byte to port D, pins 0-7
-  
-  //Determine distance of nearest object by bouncing soundwaves off of it
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  
-  digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH);
-  
-  // Calculate the distance (cm) based on the speed of sound
-  distance = duration/58.2;
-  
-  if(distance >= maximumRange || distance <= minimumRange){
-    //Indicate out of range
-    Serial.println("Out of range");
-  }
-  else {
-    // Send distance to computer
-    Serial.print("Distance: "); Serial.print(distance); Serial.println(" ");
-  }
-
+  for (int i=0; i<8; i++) {
+    //Serial.print(bitRead(x,i));
+    if(bitRead(x,i)){
+      digitalWrite(i+2,HIGH);
+    }
+    else{
+      digitalWrite(i+2,LOW);
+    }
+  }  
 }
+
+void time_out() {
+  digitalWrite(timePin,HIGH);
+}
+

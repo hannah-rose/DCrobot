@@ -4,6 +4,7 @@
 #include "stateLoop.h"
 #include "i2c_master.h"
 #include "color.h"
+#include "servo.h"
 
 
 char message[200];
@@ -14,6 +15,8 @@ static int wait=0;
 
 void main(void) {
     NU32_Startup(); // cache on, min flash wait, interrupts on, LED/button init, UART init
+    init_servo();
+    init_time();
 
     //Set up interrupt for distance tracking
 	__builtin_disable_interrupts(); // step 2: disable interrupts
@@ -76,8 +79,31 @@ void main(void) {
 	// 	update_position(act);
 	// }
 
+	/*
+	while(1){
+		straight();
+		state_t act=util_get_next_action();
+		position_t pos;
+		pos = util_position_get();
+		//sprintf(message,"STATE=%d, X:%d, Y:%d, DIR:%d\r\n", act, pos.x, pos.y, pos.dir);
+		//NU32_WriteUART1(message);
+		if (act==STRAIGHT){
+			straight();
+			idle(50);
+		} else if (act==RIGHT){
+			right();
+			idle(50);
 
+		} else {
+			left();
+			idle(50);
+
+		}
+		update_position(act);
+	}
+	*/
 }
+
 //time in hundreths of a second
 idle(int time){
 	util_state_set(IDLE);
