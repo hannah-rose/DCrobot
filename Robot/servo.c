@@ -66,6 +66,9 @@ void init_servo()
 //When time is up, sweep blocks out of robot
 void sweep()
 {
+	//Stop robot
+	util_state_set(IDLE);
+
 	// Turn servo ~90 degrees
 	OC2RS = MAX_SERVO_DUTY/2;
 

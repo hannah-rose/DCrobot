@@ -10,8 +10,13 @@
 char message[200];
 
 #define DELAYTIME 40000 // 40 thousand core clock ticks
+#define BUMP_L PORTCbits.RC1 // left bump sensor attaches to C1
+#define BUMP_R PORTCbits.RC2 // right bump sensor attaches to C2
 
 static int wait=0;
+
+int myColor=0;	//our color, do not change
+int color=0;	// color we read
 
 void main(void) {
     NU32_Startup(); // cache on, min flash wait, interrupts on, LED/button init, UART init
@@ -23,75 +28,15 @@ void main(void) {
 	util_setup();
 	__builtin_enable_interrupts();  // step 7: enable interrupts
 
-	int count=0;	// variable to count 30-second increments
+	int count=0;	// variable to count 15-second increments
 	sprintf(message,"Start!\r\n");
 	NU32_WriteUART1(message);
 	init_time();
 
-
-	straight();
-	util_state_set(IDLE);
-	// straight();
-	// util_state_set(IDLE);
-	// delay(100);
-	// straight();
-	// util_state_set(IDLE);
-	// delay(100);
-	// straight();
-	// util_state_set(IDLE);
-	// delay(100);
-	// straight();
-	// util_state_set(IDLE);
-	// delay(100);
-	// straight();
-	// util_state_set(IDLE);
-	// delay(100);
-	// straight();
-	// util_state_set(IDLE);
-	// delay(100);
-	// straight();
-	// util_state_set(IDLE);
-	// delay(100);
-	// left();
-	// idle(100);
-
-
-	// delay(50);
-	// straight();
-	// delay(50);
-	// straight();
-	// idle(100);
-	// while(1){
-	// 	straight();
-	// 	state_t act=util_get_next_action();
-	// 	position_t pos;
-	// 	pos = util_position_get();
-	// 	//sprintf(message,"STATE=%d, X:%d, Y:%d, DIR:%d\r\n", act, pos.x, pos.y, pos.dir);
-	// 	//NU32_WriteUART1(message);
-	// 	if (act==STRAIGHT){
-	// 		straight();
-	// 		idle(50);
-	// 	} else if (act==RIGHT){
-	// 		right();
-	// 		idle(50);
-
-	// 	} else {
-	// 		left();
-	// 		idle(50);
-
-	// 	}
-	// 	update_position(act);
-	// }
-
+	//Begin going straight
+	util_state_set(STRAIGHT);
 	
 	while(1){
-		//straight();
-		state_t act=util_get_next_action();
-		position_t pos;
-		pos = util_position_get();
-		//sprintf(message,"STATE=%d, X:%d, Y:%d, DIR:%d\r\n", act, pos.x, pos.y, pos.dir);
-		//NU32_WriteUART1(message);
-
 		// int gyro_x;
 		// gyro_x = getGyro();
 		// sprintf(message,"Gyroscope x is %d\r\n", gyro_x);
@@ -104,36 +49,39 @@ void main(void) {
 
 		//Timer
 		int t = check_time();
-		if(t>=30){
+		if(t>=15){
 			count++;
 			_CP0_SET_COUNT(0);
 			LATACLR = 0x30; // clear RA4 and RA5 low (LED1 and LED2 on)
 
-			if(count==6){
+			if(count==11){
 				sprintf(message,"Time! Time! Time!!!!\r\n");
 				NU32_WriteUART1(message);
 				// Call function to send robot to the correct square and dump its blocks
 				// For now, just stop the robot
-				util_state_set(IDLE);
 				sweep();
 			}
 			LATASET = 0x30;
 	
 		}
 
-		if (act==STRAIGHT){
-			straight();
-			idle(50);
-		} else if (act==RIGHT){
-			right();
-			idle(50);
+		// // Loop to randomly drive around and change states based on the bump sensor
+		// if(BUMP_R){
+		// 	left();		// If we hit the right bump sensor, turn left
+		// 	BUMP_R = 0;  // Turn off both sensors
+		// 	BUMP_L = 0;
+		// }
+		// else if(BUMP_L){
+		// 	right();	// If we hit the left bump sensor, turn right
+		// 	BUMP_L = 0;  // Turn off both sensors
+		// 	BUMP_R = 0;
+		// }
 
-		} else {
-			left();
-			idle(50);
+		// Loop to update color
+		int temp = read_color();
+		if(temp==0) color=0;
+		if(temp==1) color=1;
 
-		}
-		update_position(act);
 	}
 	
 }
@@ -147,22 +95,28 @@ idle(int time){
 		;
 	}
 }
+
+// Turns robot 90 degrees to the right
 right(){
 	int i=0;
 	util_state_set(LEFT);
 	for (i=0; i<500000; i++){
 		;
 	}
+	util_state_set(STRAIGHT);
 }
+
+// Turns robot 90 degrees to the left
 left(){
 	int i=0;
 	util_state_set(LEFT);
 	for (i=0; i<2500000; i++){
 		;
 	}
-
-	util_state_set(IDLE);
+	util_state_set(STRAIGHT);
 }
+
+// Drive straight (probably won't use)
 straight(){
 	
 	int i=0;
