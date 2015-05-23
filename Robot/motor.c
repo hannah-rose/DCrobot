@@ -92,14 +92,14 @@ void motor_init(void){                    // Initializes the module and the peri
   IFS0bits.T2IF = 0;              // INT step 5: clear interrupt flag
   IEC0bits.T2IE = 1;              // INT step 6: enable interrupt
 
-  TRISBbits.TRISB0=0;		//Configure as outputs		
-  LATBbits.LATB0=0;
-  TRISBbits.TRISB1=0;
-  LATBbits.LATB1=0;
-  TRISBbits.TRISB2=0;
-  LATBbits.LATB2=0;
-  TRISBbits.TRISB3=0;
-  LATBbits.LATB3=0;
+  TRISBbits.TRISB15=0;		//Configure as outputs		
+  LATBbits.LATB15=0;
+  TRISBbits.TRISB14=0;
+  LATBbits.LATB14=0;
+  TRISBbits.TRISB12=0;
+  LATBbits.LATB12=0;
+  TRISBbits.TRISB13=0;
+  LATBbits.LATB13=0;
 }
 
 
