@@ -16,13 +16,17 @@ static int wait=0;
 void main(void) {
     NU32_Startup(); // cache on, min flash wait, interrupts on, LED/button init, UART init
     init_servo();
-    init_time();
 
     //Set up interrupt for distance tracking
 	__builtin_disable_interrupts(); // step 2: disable interrupts
 	motor_init();
 	util_setup();
 	__builtin_enable_interrupts();  // step 7: enable interrupts
+
+	int count=0;	// variable to count 30-second increments
+	sprintf(message,"Start!\r\n");
+	NU32_WriteUART1(message);
+	init_time();
 
 
 	straight();
@@ -81,7 +85,7 @@ void main(void) {
 
 	
 	while(1){
-		straight();
+		//straight();
 		state_t act=util_get_next_action();
 		position_t pos;
 		pos = util_position_get();
@@ -100,15 +104,21 @@ void main(void) {
 
 		//Timer
 		int t = check_time();
-		if(t>=170){
-			sprintf(message,"Time! Time! Time!!!!\r\n");
-			NU32_WriteUART1(message);
+		if(t>=30){
+			count++;
+			_CP0_SET_COUNT(0);
 			LATACLR = 0x30; // clear RA4 and RA5 low (LED1 and LED2 on)
+
+			if(count==6){
+				sprintf(message,"Time! Time! Time!!!!\r\n");
+				NU32_WriteUART1(message);
+				// Call function to send robot to the correct square and dump its blocks
+				// For now, just stop the robot
+				util_state_set(IDLE);
+				sweep();
+			}
+			LATASET = 0x30;
 	
-			// Call function to send robot to the correct square and dump its blocks
-			// For now, just stop the robot
-			util_state_set(IDLE);
-			sweep();
 		}
 
 		if (act==STRAIGHT){
